@@ -1,0 +1,7 @@
+config = {
+    'kafka': ['kafka0', 'kakfa1', 'kafka2'],
+    'topic': 'kafkatopic',
+    'batches': 1000,
+    'batch_size': 1000,
+    'partitions': [0, 1]
+}

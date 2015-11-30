@@ -22,4 +22,4 @@ def produce_msgs(message):
 if __name__ == "__main__":
     with open("message.txt") as f:
         message = f.readlines()
-    produce_msgs("".join(m.strip() for m in message))
+    produce_msgs("".join(m for m in message))

@@ -10,15 +10,16 @@ def produce_msgs(message):
 
     message_bulk = [create_message(message) for r in range(config['batch_size'])]
 
-    for i in range(config['batches']):
+    for i in range(config['batches'] + 1):
         for p in config['partitions']:
             req = ProduceRequest(topic=config['topic'], partition=p, messages=message_bulk)
             resps = kafka.send_produce_request(payloads=[req], fail_on_error=True)
             sent_messages = i*config['batch_size'] * len(config['partitions'])
         print('Sent {} out of {} messages'.format(sent_messages, total_messages))
     kafka.close()
+    print('Done')
 
 if __name__ == "__main__":
     with open("message.txt") as f:
-        message = f.readline()
-    produce_msgs(message.strip())
+        message = f.readlines()
+    produce_msgs("".join(m.strip() for m in message))

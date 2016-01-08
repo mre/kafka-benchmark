@@ -18,7 +18,11 @@ def produce_msgs(config, message):
     for i in range(config['batches'] + 1):
         for p in config['partitions']:
             req = ProduceRequest(topic=config['topic'], partition=p, messages=message_bulk)
-            resps = kafka.send_produce_request(payloads=[req], fail_on_error=True)
+            try:
+                resps = kafka.send_produce_request(payloads=[req])
+            except LeaderNotAvailableError:
+                time.sleep(1)
+                resps = kafka.send_produce_request(payloads=[req])
             sent_messages = i*config['batch_size'] * len(config['partitions'])
         print('Sent {} out of {} messages'.format(sent_messages, total_messages))
     kafka.close()

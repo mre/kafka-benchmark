@@ -35,8 +35,8 @@ def parse_configfile(configfile):
 
 
 def parse_message(messagefile):
-  with open(messagefile) as f:
-        message = f.readlines()
+  with open(messagefile, mode='rb') as f:
+        message = f.read()
   return message
 
 

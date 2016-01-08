@@ -1,9 +1,14 @@
+#!/usr/bin/env python
+
 from kafka import KafkaClient, create_message
 from kafka.protocol import KafkaProtocol
 from kafka.common import ProduceRequest
-from config import config
+import argparse
+import sys
+import yaml
 
-def produce_msgs(message):
+
+def produce_msgs(config, message):
     kafka = KafkaClient(config['kafka'])
     total_messages = len(config['partitions']) * config['batches'] * config['batch_size']
     sent_messages = 0
@@ -19,7 +24,29 @@ def produce_msgs(message):
     kafka.close()
     print('Done')
 
-if __name__ == "__main__":
-    with open("message.txt") as f:
+
+def parse_configfile(configfile):
+    stream = open(configfile, "r")
+    return yaml.safe_load(stream)
+
+
+def parse_message(messagefile):
+  with open(messagefile) as f:
         message = f.readlines()
-    produce_msgs("".join(m for m in message))
+  return message
+
+
+def main():
+  parser = argparse.ArgumentParser()
+  parser.add_argument("-c", "--configfile", help="Configuration file to use", required = True)
+  parser.add_argument("-m", "--messagefile",
+                      help="File containing sample message that will be written to Kafka", required = True)
+  args = parser.parse_args()
+
+  config = parse_configfile(args.configfile)
+  message = parse_message(args.messagefile)
+  produce_msgs(config, "".join(m for m in message))
+
+
+if __name__ == "__main__":
+  main()
